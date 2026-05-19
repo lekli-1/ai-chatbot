@@ -2,10 +2,11 @@ import io
 from typing import Annotated,List
 from fastapi import FastAPI, UploadFile, File, BackgroundTasks, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
-import PyPDF2
+import pypdf
 
 from prometheus_fastapi_instrumentator import Instrumentator
 
@@ -25,6 +26,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.mount("/static", StaticFiles(directory="."), name="static")
 
 client = AsyncOpenAI()
 
@@ -50,7 +53,7 @@ class ChatRequest(BaseModel):
 
 def extract_text_from_pdf(file_bytes: bytes) -> str:
     """Reads PDF bytes and extracts text page by page."""
-    reader = PyPDF2.PdfReader(io.BytesIO(file_bytes))
+    reader = pypdf.PdfReader(io.BytesIO(file_bytes))
     text = ""
     for page in reader.pages:
         page_text = page.extract_text()
@@ -154,6 +157,8 @@ async def chat_endpoint(request: ChatRequest, db: Annotated[Session, Depends(get
     4. Missing Information: If the CONTEXT does not contain the answer, politely say something like: "Unfortunately I dont have this information" (or the equivalent in the user's language). 
     5. Conversational memory: You may engage in general friendly small talk (greetings, politeness) using the chat history, but avoid answering factual questions that are outside the provided context.
     6. Offering help: Do not offer help that you cannot provide
+    7. Do not offer any further actions at the end of the responses.
+    8. Answer with direct and short answers, stay away from overly long answers.
     
     CONTEXT:
     {context_text}
