@@ -204,3 +204,23 @@ async def get_uploaded_files(db: Annotated[Session, Depends(get_db)]):
     return {
         "uploaded_files": [f[0] for f in files if f[0]]
     }
+
+
+@app.delete("/files/{filename}", responses={404: {"description": "File not found"}})
+async def delete_pdf(filename: str, db: Annotated[Session, Depends(get_db)]):
+    """Deletes a specific PDF and all its embedded chunks from the database."""
+
+    # Attempt to delete all rows matching the filename
+    deleted_count = db.query(Document).filter(Document.filename == filename).delete()
+
+    # If 0 rows were deleted, the file didn't exist in our database
+    if deleted_count == 0:
+        raise HTTPException(status_code=404, detail=f"File '{filename}' not found.")
+
+    # Commit the transaction to save changes
+    db.commit()
+
+    return {
+        "message": f"Successfully deleted '{filename}'.",
+        "chunks_removed": deleted_count
+    }
