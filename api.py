@@ -152,7 +152,7 @@ async def chat_endpoint(request: ChatRequest, db: Annotated[Session, Depends(get
 
     INSTRUCTIONS:
     1. Language Match: Always answer in the same language as the user's most recent question (e.g., if they ask in Hungarian, reply naturally in Hungarian).
-    2. Formatting: Use formatting (like bolding key terms, or using bullet points) to make your answers easy to read.
+    2. Formatting: Make your answers easy to read.
     3. Context Strictness: Do not guess, hallucinate, or make up facts. Answer IMPORTANT questions ONLY using the information provided in the CONTEXT. You may answer generic questions without context, engage in small talk.
     4. Missing Information: If the CONTEXT does not contain the answer, politely say something like: "Unfortunately I dont have this information" (or the equivalent in the user's language). 
     5. Conversational memory: You may engage in general friendly small talk (greetings, politeness) using the chat history, but avoid answering factual questions that are outside the provided context.
