@@ -1,6 +1,7 @@
 import io
 from typing import Annotated,List
 from fastapi import FastAPI, UploadFile, File, BackgroundTasks, HTTPException, Depends
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -28,6 +29,11 @@ app.add_middleware(
 )
 
 app.mount("/static", StaticFiles(directory="widget"), name="static")
+
+@app.get("/")
+async def root():
+    """Serves the demo website."""
+    return FileResponse("widget/index.html", media_type="text/html")
 
 client = AsyncOpenAI()
 

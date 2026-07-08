@@ -128,7 +128,7 @@
     const chatInput = document.getElementById('chat-input');
     const sendBtn = document.getElementById('send-btn');
 
-    const API_URL = "http://127.0.0.1:8000/chat"; // Change to your actual backend URL later
+    const API_URL = globalThis.API_BASE_URL + "/chat"; // Change to your actual backend URL later
     let chatHistory = [];
 
     chatTriggerBtn.addEventListener('click', () => {

@@ -18,7 +18,10 @@
     </div>
 
     <!-- WIDGET -->
-    <script src="http://127.0.0.1:8000/static/widget.js"></script>
+    <script>
+        globalThis.API_BASE_URL = globalThis.location.origin;
+    </script>
+    <script src="/static/widget.js"></script>
 
 </body>
 </html>
